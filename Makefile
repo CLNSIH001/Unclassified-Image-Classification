@@ -2,10 +2,10 @@ KMC: KMC.o Driver.o
 	g++ Driver.o KMC.o -o clusterer
 
 Driver.o: Driver.cpp
-	g++ Driver.cpp -c
+	g++ Driver.cpp --std=c++11
 
 KMC.o: KMC.cpp
-	g++ KMC.cpp -c
+	g++ KMC.cpp --std=c++11
 
 clean:
-	rm  Driver.o KMC.o clusterer.exe
+	rm  *.o clusterer.exe

@@ -2,6 +2,7 @@
 #define CLASSIFY_HPP
 #include <string>
 #include <iostream>
+#include <vector>
 
 namespace CLNSIH001{
     class Classify{
@@ -11,9 +12,10 @@ namespace CLNSIH001{
             std::string outFile;
             int numClusters;
             int width;
+            std::vector<std::string> files;
             
             //Defualt Constructor
-            Classify(std::string input);
+            Classify(std::string imageSet);
             //Destructor
             ~Classify();
             //Copy Constructor
@@ -25,13 +27,14 @@ namespace CLNSIH001{
             //Move Assignment Operator
             Classify & operator=(Classify && other);
 
-            friend std::ostream & operator<<(std::ostream& os, const Classify& Classify);
+            //friend std::ostream & operator<<(std::ostream& os, const Classify& Classify);
             
             //methods
-            bool readImages(std::string folderName);
+            std::string filesList(std::string folderName);
+            void readImages(std::string fileName);
     };
-    std::ostream & operator<<(std::ostream& os, const Classify& Classify){
+    /*std::ostream & operator<<(std::ostream& os, const Classify& Classify){
         //write code here
-    }
+    }*/
 }
 #endif
