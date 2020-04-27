@@ -8,11 +8,10 @@ namespace CLNSIH001{
     class Classify{
         public:
             //variables
-            std::string imageFolder;
-            std::string outFile;
-            int numClusters;
-            int width;
+            std::string imageFolder, outFile;
+            int numClusters, width, rows, colms;
             std::vector<std::string> files;
+            std::vector<unsigned char**> pics;
             
             //Defualt Constructor
             Classify(std::string imageSet);

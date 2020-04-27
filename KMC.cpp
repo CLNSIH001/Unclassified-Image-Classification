@@ -1,6 +1,7 @@
 #include "Classify.hpp"
 #include <stdio.h>
 #include <sstream>
+#include <fstream>
 
 namespace CLNSIH001{
     using namespace std;
@@ -13,6 +14,11 @@ namespace CLNSIH001{
             iss >> name;
             files.push_back(name);
         }
+        for (string image : files)
+        {
+            readImages(image);
+        }
+        
     }
     //Destructor
     Classify::~Classify(){}
@@ -34,18 +40,15 @@ namespace CLNSIH001{
     string Classify::filesList(std::string folderName){
         char buff[256];
         //for Linux
-        string folder = "cd '" + folderName + "'; ls";
+        string command = "cd '" + folderName + "'; ls";
         string fList = "";
         
         //for Windows
-        /*folder = "cd \"" + folderName + "\" && dir";
-        pipe = popen(folder.c_str(), "r");*/
+        //string command = "cd \"" + folderName + "\" && dir";
 
-        FILE* pipe = popen(folder.c_str(), "r");
+        FILE* pipe = popen(command.c_str(), "r");
         if (!pipe) {
-            folder = "cd \"" + folderName + "\" && dir";
-            pipe = popen(folder.c_str(), "r");
-            if (!pipe){return "failed";}
+            return "failed";
         }
 
         // read till end of process:
@@ -59,7 +62,26 @@ namespace CLNSIH001{
         return fList;
     }
 
-    void Classify::readImages(std::string fileName){
-        //
+    void Classify::readImages(string fileName){
+        int maxVal;
+        rows, colms, maxVal = 0;
+        fileName = imageFolder + "/" + fileName;
+        ifstream image(fileName.c_str(), ios::binary);
+        if (!image){
+            cout << "failed" << endl;
+            return;
+        }
+        string dump;
+        getline(image, dump);
+        //getting rid of comments
+        while (image.peek() == '#'){
+            getline(image, dump);
+        }
+        //header info
+        image >> rows >> ws >> colms >> ws;
+        image >> maxVal >> ws;
+        //read bytes
+
+        image.close();
     }
 }
