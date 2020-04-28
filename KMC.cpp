@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <sstream>
 #include <fstream>
+#include <typeinfo>
 
 namespace CLNSIH001{
     using namespace std;
@@ -39,12 +40,8 @@ namespace CLNSIH001{
     //methods
     string Classify::filesList(std::string folderName){
         char buff[256];
-        //for Linux
         string command = "cd '" + folderName + "'; ls";
         string fList = "";
-        
-        //for Windows
-        //string command = "cd \"" + folderName + "\" && dir";
 
         FILE* pipe = popen(command.c_str(), "r");
         if (!pipe) {
@@ -66,7 +63,7 @@ namespace CLNSIH001{
         int maxVal;
         rows, colms, maxVal = 0;
         fileName = imageFolder + "/" + fileName;
-        ifstream image(fileName.c_str(), ios::binary);
+        fstream image(fileName.c_str(), ios::in | ios::out | ios::binary);
         if (!image){
             cout << "failed" << endl;
             return;
@@ -80,7 +77,15 @@ namespace CLNSIH001{
         //header info
         image >> rows >> ws >> colms >> ws;
         image >> maxVal >> ws;
+        
         //read bytes
+        unsigned char** bytes = new unsigned char*[rows];
+        for (int r = 0; r < rows; ++r)
+        {
+            bytes[r] = new unsigned char[colms*3];
+            image.read((char*)(bytes[r]), colms*3);
+        }
+        pics.push_back(bytes);
 
         image.close();
     }
