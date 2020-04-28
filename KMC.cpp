@@ -13,13 +13,11 @@ namespace CLNSIH001{
         istringstream iss(list);
         while (!iss.eof()){
             iss >> name;
-            files.push_back(name);
+            Picture pic;
+            pic.readImages(imageFolder, name);
+            pics.push_back(pic);
         }
-        for (string image : files)
-        {
-            readImages(image);
-        }
-        
+        pics.erase(pics.end());
     }
     //Destructor
     Classify::~Classify(){}
@@ -59,11 +57,10 @@ namespace CLNSIH001{
         return fList;
     }
 
-    void Classify::readImages(string fileName){
-        int maxVal;
-        rows, colms, maxVal = 0;
-        fileName = imageFolder + "/" + fileName;
-        fstream image(fileName.c_str(), ios::in | ios::out | ios::binary);
+    void Picture::readImages(string folder, string fileName){
+        name = fileName;
+        string path = folder + "/" + fileName;
+        fstream image(path.c_str(), ios::in | ios::out | ios::binary);
         if (!image){
             cout << "failed" << endl;
             return;
@@ -79,14 +76,12 @@ namespace CLNSIH001{
         image >> maxVal >> ws;
         
         //read bytes
-        unsigned char** bytes = new unsigned char*[rows];
+        bytes = new unsigned char*[rows];
         for (int r = 0; r < rows; ++r)
         {
             bytes[r] = new unsigned char[colms*3];
             image.read((char*)(bytes[r]), colms*3);
         }
-        pics.push_back(bytes);
-
         image.close();
     }
 }

@@ -5,13 +5,23 @@
 #include <vector>
 
 namespace CLNSIH001{
+    class Picture{
+        public:
+            std::string name;
+            int rows, colms, maxVal;
+            unsigned char** bytes;
+            Picture(){
+                name = "";
+                rows, colms, maxVal = 0;
+            }
+            void readImages(std::string folder, std::string image);
+    };
     class Classify{
         public:
             //variables
             std::string imageFolder, outFile;
-            int numClusters, width, rows, colms;
-            std::vector<std::string> files;
-            std::vector<unsigned char**> pics;
+            int numClusters, width;
+            std::vector<Picture> pics;
             
             //Defualt Constructor
             Classify(std::string imageSet);
@@ -30,7 +40,7 @@ namespace CLNSIH001{
             
             //methods
             std::string filesList(std::string folderName);
-            void readImages(std::string fileName);
+            
     };
     /*std::ostream & operator<<(std::ostream& os, const Classify& Classify){
         //write code here

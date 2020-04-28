@@ -4,7 +4,7 @@
 using namespace CLNSIH001;
 
 int main(int argc, char * argv[]){
-    /*std::string dataset = std::string(argv[1]);//folder location containing images
+    std::string dataset = std::string(argv[1]);//folder location containing images
     if (argc == 2){
         //defualt
         //output=cout;n=10;b=1
@@ -26,7 +26,6 @@ int main(int argc, char * argv[]){
             int b;
             std::istringstream(std::string(argv[3])) >> b;
         }
-    }//Complete for up to argc = 8*/
-    CLNSIH001::Classify KMC("Gradient_Numbers_PPMS");
+    }//Complete for up to argc = 8
     return 0;
 }
