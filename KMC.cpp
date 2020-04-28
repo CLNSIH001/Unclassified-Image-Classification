@@ -76,12 +76,19 @@ namespace CLNSIH001{
         image >> maxVal >> ws;
         
         //read bytes
-        bytes = new unsigned char*[rows];
-        for (int r = 0; r < rows; ++r)
+        intensity = new int[rows*colms];
+        unsigned char* temp = new unsigned char[rows*colms*3];
+        image.read((char*)(temp), rows*colms*3);
+        for (int i = 0; i < (rows*colms);)
         {
-            bytes[r] = new unsigned char[colms*3];
-            image.read((char*)(bytes[r]), colms*3);
+            int r = (int)(temp[i]);
+            int g = (int)(temp[i+1]);
+            int b = (int)(temp[i+2]);
+            intensity[i] = 0.21*r + 0.72*g + 0.07*b;
+            i += 3;
         }
+        delete[] temp;
+        temp = nullptr;
         image.close();
     }
 }

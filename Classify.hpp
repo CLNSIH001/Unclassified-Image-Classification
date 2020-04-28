@@ -9,7 +9,7 @@ namespace CLNSIH001{
         public:
             std::string name;
             int rows, colms, maxVal;
-            unsigned char** bytes;
+            int* intensity;
             Picture(){
                 name = "";
                 rows, colms, maxVal = 0;
