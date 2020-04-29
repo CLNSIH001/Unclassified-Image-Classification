@@ -10,11 +10,15 @@ namespace CLNSIH001{
             std::string name;
             int rows, colms, maxVal;
             int** intensity;
+            int* histogram;
             Picture(){
                 name = "";
                 rows, colms, maxVal = 0;
+                histogram = new int[256];
+                for(int i=0; i<256; ++i) histogram[i]=0;
             }
-            void readImages(std::string folder, std::string image);
+            void readImages(const std::string folder, const std::string image);
+            void histo(const int width);
     };
     class Classify{
         public:
@@ -24,7 +28,7 @@ namespace CLNSIH001{
             std::vector<Picture> pics;
             
             //Defualt Constructor
-            Classify(std::string imageSet);
+            Classify(const std::string imageSet);
             //Destructor
             ~Classify();
             //Copy Constructor
@@ -39,7 +43,7 @@ namespace CLNSIH001{
             //friend std::ostream & operator<<(std::ostream& os, const Classify& Classify);
             
             //methods
-            std::string filesList(std::string folderName);
+            std::string filesList(const std::string folderName);
             
     };
     /*std::ostream & operator<<(std::ostream& os, const Classify& Classify){

@@ -8,7 +8,7 @@ namespace CLNSIH001{
     using namespace std;
 
     //Default Constructor - *CONSIDER POINTERS*
-    Classify::Classify(string imageSet):imageFolder(imageSet), outFile(""), numClusters(10), width(1){
+    Classify::Classify(const string imageSet):imageFolder(imageSet), outFile(""), numClusters(10), width(1){
         string list = filesList(imageSet), name;
         istringstream iss(list);
         while (!iss.eof()){
@@ -18,18 +18,13 @@ namespace CLNSIH001{
             pics.push_back(pic);
         }
         pics.erase(pics.end());
-
-        int r = pics.at(0).rows;
-        int c = pics.at(0).colms;
-        for (int i = 0; i < r; ++i)
-        {
-            for (int j = 0; j < c; ++j)
-            {
-                cout << pics.at(0).intensity[i][j] << " ";
-            }
-            cout << endl;
+        for (auto & p : pics){
+            p.histo(width);
         }
         
+        for (int i=0; i<256; ++i){
+            cout << pics.at(0).histogram[i] <<" ";
+        }
     }
     //Destructor
     Classify::~Classify(){}
@@ -48,7 +43,7 @@ namespace CLNSIH001{
     }*/
     
     //methods
-    string Classify::filesList(std::string folderName){
+    string Classify::filesList(const std::string folderName){
         char buff[256];
         string command = "cd '" + folderName + "'; ls";
         string fList = "";
@@ -69,7 +64,7 @@ namespace CLNSIH001{
         return fList;
     }
 
-    void Picture::readImages(string folder, string fileName){
+    void Picture::readImages(const string folder, const string fileName){
         name = fileName;
         string path = folder + "/" + fileName;
         ifstream image;
@@ -105,5 +100,17 @@ namespace CLNSIH001{
             temp = nullptr;
         }
         image.close();
+    }
+
+    void Picture:: histo(const int width){
+        /*tomorrow do something with the width,
+        the other constructors an the Driver arguments*/
+        for (int i = 0; i < rows; ++i)
+        {
+            for (int j = 0; j < colms; ++j)
+            {
+                histogram[intensity[i][j]]++;
+            }
+        }
     }
 }
