@@ -18,6 +18,18 @@ namespace CLNSIH001{
             pics.push_back(pic);
         }
         pics.erase(pics.end());
+
+        int r = pics.at(0).rows;
+        int c = pics.at(0).colms;
+        for (int i = 0; i < r; ++i)
+        {
+            for (int j = 0; j < c; ++j)
+            {
+                cout << pics.at(0).intensity[i][j] << " ";
+            }
+            cout << endl;
+        }
+        
     }
     //Destructor
     Classify::~Classify(){}
@@ -26,14 +38,14 @@ namespace CLNSIH001{
     //Move Constructor - *DONT FORGET DELETE*
     Classify::Classify(Classify && other)/*:init variables*/{}
     //Copy Assignment Operator - *INCOMPLETE*
-    Classify & Classify::operator=(const Classify & other){}
+    //Classify & Classify::operator=(const Classify & other){}
     //Move Assignment Operator
-    Classify & Classify::operator=(Classify && other){
+    /*Classify & Classify::operator=(Classify && other){
         imageFolder = move(other.imageFolder);
         outFile = move(other.outFile);
         numClusters = move(other.numClusters);
         width = move(other.width);
-    }
+    }*/
     
     //methods
     string Classify::filesList(std::string folderName){
@@ -60,7 +72,8 @@ namespace CLNSIH001{
     void Picture::readImages(string folder, string fileName){
         name = fileName;
         string path = folder + "/" + fileName;
-        fstream image(path.c_str(), ios::in | ios::out | ios::binary);
+        ifstream image;
+        image.open(path.c_str(), ios::in | ios::binary);
         if (!image){
             cout << "failed" << endl;
             return;
@@ -76,19 +89,21 @@ namespace CLNSIH001{
         image >> maxVal >> ws;
         
         //read bytes
-        intensity = new int[rows*colms];
-        unsigned char* temp = new unsigned char[rows*colms*3];
-        image.read((char*)(temp), rows*colms*3);
-        for (int i = 0; i < (rows*colms);)
+        intensity = new int*[rows];
+        for (int row = 0; row < rows; ++row)
         {
-            int r = (int)(temp[i]);
-            int g = (int)(temp[i+1]);
-            int b = (int)(temp[i+2]);
-            intensity[i] = 0.21*r + 0.72*g + 0.07*b;
-            i += 3;
+            intensity[row] = new int[colms];
+            unsigned char* temp = new unsigned char[colms*3];
+            image.read((char*)(temp), colms*3);
+            for (int colm=0; colm<colms; ++colm){
+                int r = (int)(temp[3*colm]);
+                int g = (int)(temp[3*colm+1]);
+                int b = (int)(temp[3*colm+2]);
+                intensity[row][colm] = 0.21*(r) + 0.72*(g) + 0.07*(b);
+            }
+            delete[] temp;
+            temp = nullptr;
         }
-        delete[] temp;
-        temp = nullptr;
         image.close();
     }
 }
