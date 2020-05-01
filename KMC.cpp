@@ -105,14 +105,15 @@ namespace CLNSIH001{
         temp = nullptr;
     }
 
-    void Picture:: histo(const int width){
-        /*tomorrow do something with the width,
-        the other constructors an the Driver arguments*/
+    void Picture:: histo(const int w){
+        histogram = new int[256/w];
+        for(int i=0; i<(256/w); ++i) histogram[i]=0;
         for (int i = 0; i < rows; ++i)
         {
             for (int j = 0; j < colms; ++j)
             {
-                histogram[intensity[i][j]]++;
+                int val = (intensity[i][j]) / w;
+                histogram[val]++;
             }
         }
     }

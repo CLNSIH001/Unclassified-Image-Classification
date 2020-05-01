@@ -14,8 +14,6 @@ namespace CLNSIH001{
             Picture(){
                 name = "";
                 rows, colms, maxVal = 0;
-                histogram = new int[256];
-                for(int i=0; i<256; ++i) histogram[i]=0;
             }
             void readImages(const std::string folder, const std::string image);
             void histo(const int width);
