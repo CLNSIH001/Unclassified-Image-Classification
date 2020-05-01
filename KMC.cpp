@@ -25,6 +25,7 @@ namespace CLNSIH001{
         for (int i=0; i<256; ++i){
             cout << pics.at(0).histogram[i] <<" ";
         }
+        cout << endl;
     }
     //Destructor
     Classify::~Classify(){}
@@ -85,21 +86,23 @@ namespace CLNSIH001{
         
         //read bytes
         intensity = new int*[rows];
+        int tempIterator = 0;
+        unsigned char* temp = new unsigned char[rows*colms*3];
+        image.read((char*)(temp), rows*colms*3);
+        image.close();
         for (int row = 0; row < rows; ++row)
         {
             intensity[row] = new int[colms];
-            unsigned char* temp = new unsigned char[colms*3];
-            image.read((char*)(temp), colms*3);
             for (int colm=0; colm<colms; ++colm){
-                int r = (int)(temp[3*colm]);
-                int g = (int)(temp[3*colm+1]);
-                int b = (int)(temp[3*colm+2]);
+                int r = (int)(temp[tempIterator]);
+                int g = (int)(temp[tempIterator+1]);
+                int b = (int)(temp[tempIterator+2]);
                 intensity[row][colm] = 0.21*(r) + 0.72*(g) + 0.07*(b);
+                tempIterator+=3;
             }
-            delete[] temp;
-            temp = nullptr;
         }
-        image.close();
+        delete[] temp;
+        temp = nullptr;
     }
 
     void Picture:: histo(const int width){
