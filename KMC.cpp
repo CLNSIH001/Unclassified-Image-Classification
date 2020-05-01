@@ -21,11 +21,20 @@ namespace CLNSIH001{
         for (auto & p : pics){
             p.histo(width);
         }
-        
-        for (int i=0; i<256; ++i){
-            cout << pics.at(0).histogram[i] <<" ";
+    }
+    Classify::Classify(const string imageSet, const int binSize):imageFolder(imageSet), outFile(""), numClusters(10), width(binSize){
+        string list = filesList(imageSet), name;
+        istringstream iss(list);
+        while (!iss.eof()){
+            iss >> name;
+            Picture pic;
+            pic.readImages(imageFolder, name);
+            pics.push_back(pic);
         }
-        cout << endl;
+        pics.erase(pics.end());
+        for (auto & p : pics){
+            p.histo(width);
+        }
     }
     //Destructor
     Classify::~Classify(){}
@@ -106,8 +115,12 @@ namespace CLNSIH001{
     }
 
     void Picture:: histo(const int w){
-        histogram = new int[256/w];
-        for(int i=0; i<(256/w); ++i) histogram[i]=0;
+        if (256%w == 0){
+            histogram = new int[256/w];
+        }
+        else{
+            histogram = new int[(256/w)+1];
+        }
         for (int i = 0; i < rows; ++i)
         {
             for (int j = 0; j < colms; ++j)

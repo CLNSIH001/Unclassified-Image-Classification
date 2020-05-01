@@ -25,6 +25,7 @@ int main(int argc, char * argv[]){
             //histogram width
             int b;
             std::istringstream(std::string(argv[3])) >> b;
+            CLNSIH001::Classify KMC(dataset, b);
         }
     }//Complete for up to argc = 8
     return 0;

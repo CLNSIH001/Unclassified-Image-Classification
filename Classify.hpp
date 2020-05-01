@@ -27,6 +27,8 @@ namespace CLNSIH001{
             
             //Defualt Constructor
             Classify(const std::string imageSet);
+            //other constructors
+            Classify(const std::string imageSet, const int binSize);
             //Destructor
             ~Classify();
             //Copy Constructor
