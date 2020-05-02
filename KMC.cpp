@@ -9,7 +9,7 @@ namespace CLNSIH001{
 
     //Default Constructor - *CONSIDER POINTERS*
     Classify::Classify(const string imageSet):imageFolder(imageSet), outFile(""), numClusters(10), width(1){
-        string list = filesList(imageSet), name;
+        string list = filesList(), name;
         istringstream iss(list);
         while (!iss.eof()){
             iss >> name;
@@ -21,9 +21,10 @@ namespace CLNSIH001{
         for (auto & p : pics){
             p.histo(width);
         }
+        KMC();
     }
     Classify::Classify(const string imageSet, const int binSize):imageFolder(imageSet), outFile(""), numClusters(10), width(binSize){
-        string list = filesList(imageSet), name;
+        string list = filesList(), name;
         istringstream iss(list);
         while (!iss.eof()){
             iss >> name;
@@ -35,6 +36,7 @@ namespace CLNSIH001{
         for (auto & p : pics){
             p.histo(width);
         }
+        KMC();
     }
     //Destructor
     Classify::~Classify(){}
@@ -53,9 +55,9 @@ namespace CLNSIH001{
     }*/
     
     //methods
-    string Classify::filesList(const std::string folderName){
+    string Classify::filesList() const{
         char buff[256];
-        string command = "cd '" + folderName + "'; ls";
+        string command = "cd '" + imageFolder + "'; ls";
         string fList = "";
 
         FILE* pipe = popen(command.c_str(), "r");
@@ -76,6 +78,7 @@ namespace CLNSIH001{
 
     void Picture::readImages(const string folder, const string fileName){
         name = fileName;
+        int maxVal = 0;
         string path = folder + "/" + fileName;
         ifstream image;
         image.open(path.c_str(), ios::in | ios::binary);
@@ -117,9 +120,13 @@ namespace CLNSIH001{
     void Picture:: histo(const int w){
         if (256%w == 0){
             histogram = new int[256/w];
+            for (int i=0; i < 256/w; ++i) histogram[i]=0;
+            hgSize = 256/w;
         }
         else{
             histogram = new int[(256/w)+1];
+            for (int i=0; i < 256/w+1; ++i) histogram[i]=0;
+            hgSize = 256/w+1;
         }
         for (int i = 0; i < rows; ++i)
         {
@@ -129,5 +136,24 @@ namespace CLNSIH001{
                 histogram[val]++;
             }
         }
+    }
+
+    void Classify::KMC(){
+        //initialize
+        for (int i=0; i<numClusters; i++){
+            string key = "Cluster " + i;
+            key = key + ": ";
+            int index = rand() % pics.size();
+            clusters[key] = pics.at(index);
+            pics.erase(pics.begin()+index-1);
+        }
+    }
+
+    long Picture::distance(Picture other){
+        long d = 0;
+        for (int i=0; i<hgSize; ++i){
+            d += (this->histogram[i] - other.histogram[i])*(this->histogram[i] - other.histogram[i]);
+        }
+        return d;
     }
 }

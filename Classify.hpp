@@ -3,20 +3,22 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <map>
 
 namespace CLNSIH001{
     class Picture{
         public:
             std::string name;
-            int rows, colms, maxVal;
             int** intensity;
             int* histogram;
+            int hgSize, rows, colms;
             Picture(){
                 name = "";
-                rows, colms, maxVal = 0;
+                hgSize, rows, colms = 0;
             }
             void readImages(const std::string folder, const std::string image);
             void histo(const int width);
+            long distance(Picture other);
     };
     class Classify{
         public:
@@ -24,6 +26,7 @@ namespace CLNSIH001{
             std::string imageFolder, outFile;
             int numClusters, width;
             std::vector<Picture> pics;
+            std::map<std::string, Picture> clusters;
             
             //Defualt Constructor
             Classify(const std::string imageSet);
@@ -43,7 +46,9 @@ namespace CLNSIH001{
             //friend std::ostream & operator<<(std::ostream& os, const Classify& Classify);
             
             //methods
-            std::string filesList(const std::string folderName);
+            std::string filesList(void) const;
+            void KMC(void);
+
             
     };
     /*std::ostream & operator<<(std::ostream& os, const Classify& Classify){
