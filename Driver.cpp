@@ -8,7 +8,7 @@ int main(int argc, char * argv[]){
     if (argc == 2){
         //defualt
         //output=cout;n=10;b=1
-        CLNSIH001::Classify KMC(dataset);
+        CLNSIH001::Classify KMC(dataset, false);
     }
     else if (argc > 2){
         std::string command = std::string(argv[2]);
@@ -25,7 +25,10 @@ int main(int argc, char * argv[]){
             //histogram width
             int b;
             std::istringstream(std::string(argv[3])) >> b;
-            CLNSIH001::Classify KMC(dataset, b);
+            CLNSIH001::Classify KMC(dataset, b, false);
+        }
+        else if (command == "-color"){
+            //DO NOT forget to include the spelling of colour in your readme.txt
         }
     }//Complete for up to argc = 8
     return 0;

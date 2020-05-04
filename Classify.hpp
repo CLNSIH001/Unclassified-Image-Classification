@@ -3,7 +3,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
-#include <map>
+//#include <map>
 
 namespace CLNSIH001{
     class Picture{
@@ -12,26 +12,38 @@ namespace CLNSIH001{
             int** intensity;
             int* histogram;
             int hgSize, rows, colms;
+            int cluster; 
+            long minD;
             Picture(){
                 name = "";
                 hgSize, rows, colms = 0;
+                minD = __LONG_MAX__;
             }
             void readImages(const std::string folder, const std::string image);
             void histo(const int width);
-            long distance(Picture other);
+    };
+    class Cluster{
+        public:
+            std::string name;
+            std::vector<Picture> images;
+            int* centroid;
+            int length;     //centroid array length
+            void copyHisto(Picture image);
+            void mean();
     };
     class Classify{
         public:
             //variables
             std::string imageFolder, outFile;
+            bool colour;
             int numClusters, width;
             std::vector<Picture> pics;
-            std::map<std::string, Picture> clusters;
+            std::vector<Cluster> clusters;
             
             //Defualt Constructor
-            Classify(const std::string imageSet);
+            Classify(const std::string imageSet, bool color);
             //other constructors
-            Classify(const std::string imageSet, const int binSize);
+            Classify(const std::string imageSet, const int binSize, bool color);
             //Destructor
             ~Classify();
             //Copy Constructor
@@ -48,7 +60,7 @@ namespace CLNSIH001{
             //methods
             std::string filesList(void) const;
             void KMC(void);
-
+            long distance(int* pic, int* cluster, int size);
             
     };
     /*std::ostream & operator<<(std::ostream& os, const Classify& Classify){

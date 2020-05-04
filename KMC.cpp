@@ -3,12 +3,14 @@
 #include <sstream>
 #include <fstream>
 #include <typeinfo>
+#include <time.h>
+#include <set>
 
 namespace CLNSIH001{
     using namespace std;
 
     //Default Constructor - *CONSIDER POINTERS*
-    Classify::Classify(const string imageSet):imageFolder(imageSet), outFile(""), numClusters(10), width(1){
+    Classify::Classify(const string imageSet, bool color):imageFolder(imageSet), outFile(""), numClusters(10), width(1), colour(color){
         string list = filesList(), name;
         istringstream iss(list);
         while (!iss.eof()){
@@ -22,8 +24,15 @@ namespace CLNSIH001{
             p.histo(width);
         }
         KMC();
+        for (Cluster c : clusters){
+            cout << c.name << " ";
+            for (Picture p : c.images){
+                cout << p.name << ", ";
+            }
+            cout << endl;
+        }
     }
-    Classify::Classify(const string imageSet, const int binSize):imageFolder(imageSet), outFile(""), numClusters(10), width(binSize){
+    Classify::Classify(const string imageSet, const int binSize, bool color):imageFolder(imageSet), outFile(""), numClusters(10), width(binSize), colour(color){
         string list = filesList(), name;
         istringstream iss(list);
         while (!iss.eof()){
@@ -140,20 +149,78 @@ namespace CLNSIH001{
 
     void Classify::KMC(){
         //initialize
-        for (int i=0; i<numClusters; i++){
-            string key = "Cluster " + i;
-            key = key + ": ";
+        srand(time(NULL));
+        set<int> generatedNums;
+        for (int i=0; i<numClusters; ++i){
+            Cluster cluster;
+            string label = "cluster " + to_string(i) + ": ";
+            cluster.name = label;
             int index = rand() % pics.size();
-            clusters[key] = pics.at(index);
-            pics.erase(pics.begin()+index-1);
+            while (generatedNums.count(index) > 0)
+            {
+                index = rand() % pics.size();
+            }
+            pics.at(index).cluster = i;
+            cluster.images.push_back(pics.at(index));
+            cluster.length = pics.at(index).hgSize;
+            cluster.copyHisto(pics.at(index));
+            generatedNums.insert(index);
+            clusters.push_back(cluster);
+        }
+        //assign
+        for (int j=0; j<pics.size(); ++j){
+            if (generatedNums.count(j) > 0){
+                continue;
+            }
+            for (int k = 0; k < clusters.size(); ++k){
+                long dist = distance(pics.at(j).histogram, clusters.at(k).centroid, clusters.at(k).length);
+                if (dist < pics.at(j).minD){
+                    pics.at(j).minD = dist;
+                    pics.at(j).cluster = k;
+                    clusters.at(k).images.push_back(pics.at(j));
+                }
+            }
+        }
+        //update each clusters centroid
+        for (int a = 0; a < clusters.size(); ++a){
+            clusters.at(a).mean();
+            clusters.at(a).images.clear();
+        }
+        //reassign
+        for (int z=0; z<pics.size(); ++z){
+            for (int k = 0; k < clusters.size(); ++k){
+                long dist = distance(pics.at(z).histogram, clusters.at(k).centroid, clusters.at(k).length);
+                if (dist < pics.at(z).minD){
+                    pics.at(z).minD = dist;
+                    pics.at(z).cluster = k;
+                    clusters.at(k).images.push_back(pics.at(z));
+                }
+            }
         }
     }
 
-    long Picture::distance(Picture other){
+    void Cluster::copyHisto(Picture image){
+        centroid = new int[length];
+        for (int i=0; i<length; ++i){
+            centroid[i] = image.histogram[i];
+        }
+    }
+
+    long Classify::distance(int* pic, int* cluster, int size){
         long d = 0;
-        for (int i=0; i<hgSize; ++i){
-            d += (this->histogram[i] - other.histogram[i])*(this->histogram[i] - other.histogram[i]);
+        for (int i=0; i<size; ++i){
+            d += (pic[i] - cluster[i])*(pic[i] - cluster[i]);
         }
         return d;
+    }
+
+    void Cluster::mean(){
+        for (int i=0; i<length; ++i){
+            int sum = 0;
+            for (int j=0; j<images.size(); ++j){
+                sum += images.at(j).histogram[i];
+            }
+            centroid[i] = sum / images.size();
+        }
     }
 }
