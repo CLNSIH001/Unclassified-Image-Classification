@@ -28,7 +28,7 @@ int main(int argc, char * argv[]){
             CLNSIH001::Classify KMC(dataset, b, false);
         }
         else if (command == "-color"){
-            //DO NOT forget  to include the spelling of colour in your readme.txt
+            //DO NOT forget to include the spelling of colour in your readme.txt
         }
     }//Complete for up to argc = 8
     return 0;

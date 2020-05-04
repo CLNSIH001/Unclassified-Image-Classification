@@ -26,10 +26,11 @@ namespace CLNSIH001{
         public:
             std::string name;
             std::vector<Picture> images;
-            int* centroid;
+            int* centroid, *prev;
             int length;     //centroid array length
             void copyHisto(Picture image);
             void mean();
+            bool equal();
     };
     class Classify{
         public:
@@ -61,6 +62,8 @@ namespace CLNSIH001{
             std::string filesList(void) const;
             void KMC(void);
             long distance(int* pic, int* cluster, int size);
+            void update();
+            void reassign();
             
     };
     /*std::ostream & operator<<(std::ostream& os, const Classify& Classify){

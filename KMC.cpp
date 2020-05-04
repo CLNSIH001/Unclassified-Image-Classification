@@ -24,13 +24,13 @@ namespace CLNSIH001{
             p.histo(width);
         }
         KMC();
-        for (Cluster c : clusters){
-            cout << c.name << " ";
+        /*for (Cluster c : clusters){
+            cout << c.name;
             for (Picture p : c.images){
                 cout << p.name << ", ";
             }
             cout << endl;
-        }
+        }*/
     }
     Classify::Classify(const string imageSet, const int binSize, bool color):imageFolder(imageSet), outFile(""), numClusters(10), width(binSize), colour(color){
         string list = filesList(), name;
@@ -181,19 +181,45 @@ namespace CLNSIH001{
                 }
             }
         }
-        //update each clusters centroid
-        for (int a = 0; a < clusters.size(); ++a){
-            clusters.at(a).mean();
-            clusters.at(a).images.clear();
+        update();
+        for (Cluster &c : clusters){
+            while(!c.equal()){
+                reassign();
+                update();
+            }
         }
+        for (Cluster &c : clusters){
+            cout << c.equal() << endl;
+        }
+    }
+
+    void Classify::update(){
+        //update each clusters centroid
+        for (Cluster &c : clusters){
+            for (int a = 0; a < c.length; ++a){
+                c.prev[a] = c.centroid[a];
+            }
+            c.mean();
+            //c.images.clear();
+        }
+    }
+
+    void Classify::reassign(){
         //reassign
-        for (int z=0; z<pics.size(); ++z){
-            for (int k = 0; k < clusters.size(); ++k){
-                long dist = distance(pics.at(z).histogram, clusters.at(k).centroid, clusters.at(k).length);
-                if (dist < pics.at(z).minD){
-                    pics.at(z).minD = dist;
-                    pics.at(z).cluster = k;
-                    clusters.at(k).images.push_back(pics.at(z));
+        for (int b=0; b<pics.size(); ++b){
+            for (int c = 0; c < clusters.size(); ++c){
+                long dist = distance(pics.at(b).histogram, clusters.at(c).centroid, clusters.at(c).length);
+                if (dist < pics.at(b).minD){
+                    //remove pic from its current cluster
+                    for (auto i = clusters.at(pics.at(b).cluster).images.begin(); i<clusters.at(pics.at(b).cluster).images.end(); ++i){
+                        if (i->name == pics.at(b).name){
+                            clusters.at(pics.at(b).cluster).images.erase(i);
+                            break;
+                        }
+                    }
+                    pics.at(b).minD = dist;
+                    pics.at(b).cluster = c;
+                    clusters.at(c).images.push_back(pics.at(b));
                 }
             }
         }
@@ -204,6 +230,7 @@ namespace CLNSIH001{
         for (int i=0; i<length; ++i){
             centroid[i] = image.histogram[i];
         }
+        prev = new int[length];
     }
 
     long Classify::distance(int* pic, int* cluster, int size){
@@ -220,7 +247,15 @@ namespace CLNSIH001{
             for (int j=0; j<images.size(); ++j){
                 sum += images.at(j).histogram[i];
             }
+            //cout << this->name << " " << sum << endl;
             centroid[i] = sum / images.size();
         }
+    }
+
+    bool Cluster::equal(){
+        for (int x=0; x<length; ++x){
+            if (centroid[x] - prev[x] != 0){return false;}
+        }
+        return true;
     }
 }
