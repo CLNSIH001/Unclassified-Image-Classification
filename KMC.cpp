@@ -24,13 +24,6 @@ namespace CLNSIH001{
             p.histo(width);
         }
         KMC();
-        for (Cluster c : clusters){
-            cout << c.name;
-            for (Picture p : c.images){
-                cout << p.name << ", ";
-            }
-            cout << endl;
-        }
     }
     Classify::Classify(const string imageSet, const int binSize, bool color):imageFolder(imageSet), outFile(""), numClusters(10), width(binSize), colour(color){
         string list = filesList(), name;
@@ -188,9 +181,6 @@ namespace CLNSIH001{
                 update();
             }
         }
-        for (Cluster &c : clusters){
-            cout << c.equal() << endl;
-        }
     }
 
     void Classify::update(){
@@ -200,28 +190,21 @@ namespace CLNSIH001{
                 c.prev[a] = c.centroid[a];
             }
             c.mean();
-            //c.images.clear();
         }
     }
 
     void Classify::reassign(){
         //reassign
+        for (Cluster &c : clusters) c.images.clear();
         for (int b=0; b<pics.size(); ++b){
             for (int c = 0; c < clusters.size(); ++c){
                 long dist = distance(pics.at(b).histogram, clusters.at(c).centroid, clusters.at(c).length);
                 if (dist < pics.at(b).minD){
-                    //remove pic from its current cluster
-                    for (auto i = clusters.at(pics.at(b).cluster).images.begin(); i<clusters.at(pics.at(b).cluster).images.end(); ++i){
-                        if (i->name == pics.at(b).name){
-                            clusters.at(pics.at(b).cluster).images.erase(i);
-                            break;
-                        }
-                    }
                     pics.at(b).minD = dist;
                     pics.at(b).cluster = c;
-                    clusters.at(c).images.push_back(pics.at(b));
                 }
             }
+            clusters.at(pics.at(b).cluster).images.push_back(pics.at(b));
         }
     }
 
@@ -247,7 +230,6 @@ namespace CLNSIH001{
             for (int j=0; j<images.size(); ++j){
                 sum += images.at(j).histogram[i];
             }
-            //cout << this->name << " " << sum << endl;
             centroid[i] = sum / images.size();
         }
     }
