@@ -24,13 +24,13 @@ namespace CLNSIH001{
             p.histo(width);
         }
         KMC();
-        /*for (Cluster c : clusters){
+        for (Cluster c : clusters){
             cout << c.name;
             for (Picture p : c.images){
                 cout << p.name << ", ";
             }
             cout << endl;
-        }*/
+        }
     }
     Classify::Classify(const string imageSet, const int binSize, bool color):imageFolder(imageSet), outFile(""), numClusters(10), width(binSize), colour(color){
         string list = filesList(), name;
