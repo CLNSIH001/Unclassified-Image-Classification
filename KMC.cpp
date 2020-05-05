@@ -225,6 +225,7 @@ namespace CLNSIH001{
     }
 
     void Cluster::mean(){
+        if (images.size() == 0){return;}
         for (int i=0; i<length; ++i){
             int sum = 0;
             for (int j=0; j<images.size(); ++j){
@@ -239,5 +240,20 @@ namespace CLNSIH001{
             if (centroid[x] - prev[x] != 0){return false;}
         }
         return true;
+    }
+
+    ostream & operator<<(std::ostream& os, const Classify& Classify){
+        for (Cluster c : Classify.clusters){
+            os << c.name;
+            if (c.images.size() == 0){
+                os << '\n' << std::endl;
+                continue;}
+            for (int i=0; i < c.images.size()-1; ++i){
+                os << c.images[i].name << ", ";
+            }
+            os << c.images[c.images.size()-1].name;
+            os << '\n' << std::endl;
+        }
+        return os;
     }
 }

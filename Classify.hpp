@@ -33,7 +33,7 @@ namespace CLNSIH001{
             bool equal();
     };
     class Classify{
-        public:
+        private:
             //variables
             std::string imageFolder, outFile;
             bool colour;
@@ -41,6 +41,13 @@ namespace CLNSIH001{
             std::vector<Picture> pics;
             std::vector<Cluster> clusters;
             
+            //methods
+            std::string filesList(void) const;
+            void KMC(void);
+            long distance(int* pic, int* cluster, int size);
+            void update();
+            void reassign();
+        public:
             //Defualt Constructor
             Classify(const std::string imageSet, bool color);
             //other constructors
@@ -56,18 +63,7 @@ namespace CLNSIH001{
             //Move Assignment Operator
             Classify & operator=(Classify && other);
 
-            //friend std::ostream & operator<<(std::ostream& os, const Classify& Classify);
-            
-            //methods
-            std::string filesList(void) const;
-            void KMC(void);
-            long distance(int* pic, int* cluster, int size);
-            void update();
-            void reassign();
-            
+            friend std::ostream & operator<<(std::ostream& os, const Classify& Classify);
     };
-    /*std::ostream & operator<<(std::ostream& os, const Classify& Classify){
-        //write code here
-    }*/
 }
 #endif

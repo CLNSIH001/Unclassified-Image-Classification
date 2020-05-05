@@ -9,6 +9,7 @@ int main(int argc, char * argv[]){
         //defualt
         //output=cout;n=10;b=1
         CLNSIH001::Classify KMC(dataset, false);
+        std::cout << KMC;
     }
     else if (argc > 2){
         std::string command = std::string(argv[2]);
