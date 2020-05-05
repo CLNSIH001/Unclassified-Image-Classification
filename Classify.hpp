@@ -13,11 +13,8 @@ namespace CLNSIH001{
             int hgSize, rows, colms;
             int cluster; 
             long minD;
-            Picture(){
-                name = "";
-                hgSize, rows, colms = 0;
-                minD = __LONG_MAX__;
-            }
+            Picture();
+            //~Picture();
             void readImages(const std::string folder, const std::string image);
             void histo(const int width);
     };
@@ -27,6 +24,7 @@ namespace CLNSIH001{
             std::vector<Picture> images;
             int* centroid, *prev;
             int length;     //centroid array length
+            //~Cluster();
             void copyHisto(Picture image);
             void mean();
             bool equal();
@@ -49,8 +47,6 @@ namespace CLNSIH001{
         public:
             //Defualt Constructor
             Classify(const std::string imageSet, const int k, const int bin, const bool color);
-            //Destructor
-            ~Classify();
             //Copy Constructor
             Classify(const Classify & other);
             //Move Constructor

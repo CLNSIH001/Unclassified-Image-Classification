@@ -25,20 +25,59 @@ namespace CLNSIH001{
         KMC();
     }
 
-    //Destructor - POINTERS
-    Classify::~Classify(){}
-    //Copy Constructor - *FIX*
-    Classify::Classify(const Classify & other):imageFolder(other.imageFolder), numClusters(other.numClusters), width(other.width) {}
-    //Move Constructor - *DONT FORGET DELETE*
-    Classify::Classify(Classify && other)/*:init variables*/{}
-    //Copy Assignment Operator - *INCOMPLETE*
-    //Classify & Classify::operator=(const Classify & other){}
+    //Copy Constructor
+    Classify::Classify(const Classify & other):imageFolder(other.imageFolder), numClusters(other.numClusters), width(other.width), pics(other.pics), clusters(other.clusters), colour(other.colour){}
+    //Move Constructor
+    Classify::Classify(Classify && other):imageFolder(other.imageFolder), numClusters(other.numClusters), width(other.width), colour(other.colour){
+        pics.swap(other.pics);
+        clusters.swap(other.clusters);
+        other.imageFolder = "";
+        other.numClusters = 0;
+        other.width = 0;
+        other.colour = false;
+    }
+    //Copy Assignment Operator
+    Classify & Classify::operator=(const Classify & other){
+        imageFolder = other.imageFolder;
+        numClusters = other.numClusters;
+        width = other.width;
+        imageFolder = other.imageFolder;
+        numClusters = other.numClusters;
+        width = other.width;
+        pics = other.pics;
+        clusters = other.clusters;
+        colour = other.colour;
+    }
     //Move Assignment Operator
-    /*Classify & Classify::operator=(Classify && other){
+    Classify & Classify::operator=(Classify && other){
         imageFolder = move(other.imageFolder);
-        outFile = move(other.outFile);
         numClusters = move(other.numClusters);
         width = move(other.width);
+        imageFolder = move(other.imageFolder);
+        numClusters = move(other.numClusters);
+        width = move(other.width);
+        pics = move(other.pics);
+        clusters = move(other.clusters);
+        colour = move(other.colour);
+    }
+
+    Picture::Picture(){
+        name = "";
+        hgSize, rows, colms = 0;
+        minD = __LONG_MAX__;
+    }
+
+    /*Cluster::~Cluster(){
+        delete[] centroid, prev;
+        centroid, prev = nullptr;
+    }
+
+    Picture::~Picture(){
+        delete[] histogram;
+        for (int a=0; a<rows; a++){
+            delete intensity[a];
+        }
+        delete intensity;
     }*/
     
     //methods
@@ -243,7 +282,7 @@ namespace CLNSIH001{
     }
 
     void Classify::WriteTo(std::string outFile){
-        string output = outFile + ".txt";
+        string output = outFile + "#.txt";
         ofstream file(output.c_str(), ios::out);
         for (Cluster c : clusters){
             file << c.name;
