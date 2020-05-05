@@ -3,7 +3,6 @@
 #include <string>
 #include <iostream>
 #include <vector>
-//#include <map>
 
 namespace CLNSIH001{
     class Picture{
@@ -35,7 +34,7 @@ namespace CLNSIH001{
     class Classify{
         private:
             //variables
-            std::string imageFolder, outFile;
+            std::string imageFolder;
             bool colour;
             int numClusters, width;
             std::vector<Picture> pics;
@@ -49,9 +48,7 @@ namespace CLNSIH001{
             void reassign();
         public:
             //Defualt Constructor
-            Classify(const std::string imageSet, bool color);
-            //other constructors
-            Classify(const std::string imageSet, const int binSize, bool color);
+            Classify(const std::string imageSet, const int k, const int bin, const bool color);
             //Destructor
             ~Classify();
             //Copy Constructor
@@ -64,6 +61,7 @@ namespace CLNSIH001{
             Classify & operator=(Classify && other);
 
             friend std::ostream & operator<<(std::ostream& os, const Classify& Classify);
+            void WriteTo(std::string outFile);
     };
 }
 #endif

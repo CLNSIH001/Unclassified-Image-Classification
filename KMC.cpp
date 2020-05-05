@@ -2,15 +2,14 @@
 #include <stdio.h>
 #include <sstream>
 #include <fstream>
-#include <typeinfo>
 #include <time.h>
 #include <set>
 
 namespace CLNSIH001{
     using namespace std;
 
-    //Default Constructor - *CONSIDER POINTERS*
-    Classify::Classify(const string imageSet, bool color):imageFolder(imageSet), outFile(""), numClusters(10), width(1), colour(color){
+    //Constructor
+    Classify::Classify(const std::string imageSet, const int k, const int bin, const bool color):imageFolder(imageSet), numClusters(k), width(bin), colour(color){
         string list = filesList(), name;
         istringstream iss(list);
         while (!iss.eof()){
@@ -25,25 +24,11 @@ namespace CLNSIH001{
         }
         KMC();
     }
-    Classify::Classify(const string imageSet, const int binSize, bool color):imageFolder(imageSet), outFile(""), numClusters(10), width(binSize), colour(color){
-        string list = filesList(), name;
-        istringstream iss(list);
-        while (!iss.eof()){
-            iss >> name;
-            Picture pic;
-            pic.readImages(imageFolder, name);
-            pics.push_back(pic);
-        }
-        pics.erase(pics.end());
-        for (auto & p : pics){
-            p.histo(width);
-        }
-        KMC();
-    }
-    //Destructor
+
+    //Destructor - POINTERS
     Classify::~Classify(){}
     //Copy Constructor - *FIX*
-    Classify::Classify(const Classify & other):imageFolder(other.imageFolder), outFile(other.outFile), numClusters(other.numClusters), width(other.width) {}
+    Classify::Classify(const Classify & other):imageFolder(other.imageFolder), numClusters(other.numClusters), width(other.width) {}
     //Move Constructor - *DONT FORGET DELETE*
     Classify::Classify(Classify && other)/*:init variables*/{}
     //Copy Assignment Operator - *INCOMPLETE*
@@ -255,5 +240,22 @@ namespace CLNSIH001{
             os << '\n' << std::endl;
         }
         return os;
+    }
+
+    void Classify::WriteTo(std::string outFile){
+        string output = outFile + ".txt";
+        ofstream file(output.c_str(), ios::out);
+        for (Cluster c : clusters){
+            file << c.name;
+            if (c.images.size() == 0){
+                file << '\n' << '\n';
+                continue;}
+            for (int i=0; i < c.images.size()-1; ++i){
+                file << c.images[i].name << ", ";
+            }
+            file << c.images[c.images.size()-1].name;
+            file << '\n' << '\n';
+        }
+        file.close();
     }
 }
